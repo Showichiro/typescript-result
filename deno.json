@@ -8,9 +8,5 @@
   "exports": {
     ".": "./mod.ts",
     "./v0": "./v0.ts"
-  },
-  "publish": {
-    "include": ["README.md", "LICENSE"],
-    "exclude": ["./**/*.test.ts"]
   }
 }
