@@ -41,3 +41,17 @@ Deno.test("Result type", () => {
     assertEquals(errResult.error, "error message");
   }
 });
+
+Deno.test("ok with string", () => {
+  const result = ok("hello");
+  assertEquals(result, { ok: true, data: "hello" });
+  assert(isOk(result));
+  assertEquals(result.data, "hello");
+});
+
+Deno.test("err with number", () => {
+  const result = err(42);
+  assertEquals(result, { ok: false, error: 42 });
+  assert(isErr(result));
+  assertEquals(result.error, 42);
+});
