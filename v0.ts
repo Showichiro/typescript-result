@@ -106,3 +106,28 @@ export const isOk = <T, E>(result: Result<T, E>): result is Ok<T> => result.ok;
  */
 export const isErr = <T, E>(result: Result<T, E>): result is Err<E> =>
   !result.ok;
+
+/**
+ * @description If the input is Ok, apply the function, otherwise return the input.
+ * @param func The function to apply to the Ok value.
+ * @returns A function that takes a Result and returns a Result.
+ * @example
+ * ```ts
+ * import { ok, err, bypass } from "./v0.ts";
+ *
+ * const okResult = ok(10);
+ * const errResult = err("error");
+ *
+ * const bypassFn = (num: number) => ok(num * 2);
+ *
+ * const bypassedOkResult = bypass(bypassFn)(okResult); // ok(20)
+ * const bypassedErrResult = bypass(bypassFn)(errResult); // err("error")
+ * ```
+ */
+export const bypass = <PreviousOk, PreviousNg, NextOk, NextNg>(
+  func: (i: PreviousOk) => Result<NextOk, NextNg>,
+): (
+  input: Result<PreviousOk, PreviousNg>,
+) => Result<NextOk, PreviousNg | NextNg> => {
+  return (input) => (input.ok ? func(input.data) : input);
+};

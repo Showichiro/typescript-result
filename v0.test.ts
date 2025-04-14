@@ -1,4 +1,4 @@
-import { err, isErr, isOk, ok, type Result } from "./v0.ts";
+import { bypass, err, isErr, isOk, ok, type Result } from "./v0.ts";
 import { assert, assertEquals } from "jsr:@std/assert";
 
 Deno.test("ok", () => {
@@ -54,4 +54,29 @@ Deno.test("err with number", () => {
   assertEquals(result, { ok: false, error: 42 });
   assert(isErr(result));
   assertEquals(result.error, 42);
+});
+
+Deno.test("bypass", () => {
+  const okResult: Result<number, string> = ok(10);
+  const errResult: Result<number, string> = err("error");
+
+  const bypassFn = (num: number): Result<number, string> => ok(num * 2);
+  const bypassErrFn = (_num: number): Result<number, string> =>
+    err("new error");
+
+  const bypassedOkResult = bypass(bypassFn)(okResult);
+  const bypassedErrResult = bypass(bypassFn)(errResult);
+
+  if (isOk(bypassedOkResult)) {
+    assertEquals(bypassedOkResult.data, 20);
+  }
+
+  if (isErr(bypassedErrResult)) {
+    assertEquals(bypassedErrResult.error, "error");
+  }
+
+  const bypassedOkResultWithError = bypass(bypassErrFn)(okResult);
+  if (isErr(bypassedOkResultWithError)) {
+    assertEquals(bypassedOkResultWithError.error, "new error");
+  }
 });
