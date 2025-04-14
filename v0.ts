@@ -1,8 +1,4 @@
 /**
- * @module result
- * @description Represents a result that can be either successful or an error.
- */
-/**
  * @description Represents a successful result.
  * @example
  * ```ts
